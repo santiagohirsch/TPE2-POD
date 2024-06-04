@@ -11,6 +11,11 @@
   <name>tpe2-g12-client</name>
   <dependencies>
     <dependency>
+      <groupId>com.hazelcast</groupId>
+      <artifactId>hazelcast-all</artifactId>
+      <version>3.8.6</version>
+    </dependency>
+    <dependency>
       <groupId>ar.edu.itba.pod.tpe2</groupId>
       <artifactId>tpe2-g12-api</artifactId>
       <version>1.0-SNAPSHOT</version>
