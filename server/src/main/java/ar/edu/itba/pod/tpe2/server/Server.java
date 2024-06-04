@@ -18,7 +18,7 @@ public class Server {
         Config config = new Config();
         // Group Config
         GroupConfig groupConfig = new
-                GroupConfig().setName("g0").setPassword("g0-pass");
+                GroupConfig().setName("g12").setPassword("g12-pass");
         config.setGroupConfig(groupConfig);
         // Network Config
         MulticastConfig multicastConfig = new MulticastConfig();

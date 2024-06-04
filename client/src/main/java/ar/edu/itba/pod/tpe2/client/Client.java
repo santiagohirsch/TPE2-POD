@@ -19,7 +19,7 @@ public class Client {
         ClientConfig clientConfig = new ClientConfig();
         // Group Config
         GroupConfig groupConfig = new
-                GroupConfig().setName("g0").setPassword("g0-pass");
+                GroupConfig().setName("g12").setPassword("g12-pass");
         clientConfig.setGroupConfig(groupConfig);
         // Client Network Config
         ClientNetworkConfig clientNetworkConfig = new ClientNetworkConfig();
