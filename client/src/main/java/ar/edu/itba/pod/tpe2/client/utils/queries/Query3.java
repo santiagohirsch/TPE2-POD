@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("deprecation")
-public class Query3 <K, E, T extends Ticket<K, E>> implements Runnable {
+public class Query3 <K, T extends Ticket<K>> implements Runnable {
     private static final String OUTPUT_HEADER = "Issuing Agency;Percentage\n";
     private static final String OUTPUT_NAME = "query3.csv";
 

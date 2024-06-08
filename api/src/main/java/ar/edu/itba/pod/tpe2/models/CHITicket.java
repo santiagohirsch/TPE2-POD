@@ -8,7 +8,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-public class CHITicket extends Ticket<String, LocalDateTime> {
+public class CHITicket extends Ticket<String> {
     public CHITicket() {
         //Hazelcast
     }

@@ -6,7 +6,7 @@ import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 
 @SuppressWarnings("deprecation")
-public class TopAgenciesMapper <K, E, T extends Ticket<K, E>> implements Mapper<Integer, T, String, Double> {
+public class TopAgenciesMapper <K, T extends Ticket<K>> implements Mapper<Integer, T, String, Double> {
 
     @Override
     public void map(Integer integer, T ticket, Context<String, Double> context) {

@@ -26,7 +26,7 @@ public class Client {
         String addresses = "192.168.1.137:5701";
         HazelcastInstance hazelcastInstance = getHazelcastInstance(parseAddresses(addresses));
 
-        String cityName = "CHI";
+        String cityName = "NYC";
         StringBuilder infractionsPath = new StringBuilder("../TPE2-datasets/");
         StringBuilder ticketsPath = new StringBuilder("../TPE2-datasets/");
         String outPath = "../TPE2-out/";

@@ -4,10 +4,11 @@ import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-public abstract class Ticket<K, E> implements DataSerializable {
+public abstract class Ticket<K> implements DataSerializable {
     private String plate;
-    private E issueDate;
+    private LocalDateTime issueDate;
     private K infractionCode;
     private Double fineAmount;
     private String countyName;
@@ -17,7 +18,7 @@ public abstract class Ticket<K, E> implements DataSerializable {
         //Hazelcast
     }
 
-    public Ticket(String plate, E issueDate, K infractionCode, Double fineAmount, String countyName, String issuingAgency) {
+    public Ticket(String plate, LocalDateTime issueDate, K infractionCode, Double fineAmount, String countyName, String issuingAgency) {
         this.plate = plate;
         this.issueDate = issueDate;
         this.infractionCode = infractionCode;
@@ -30,7 +31,7 @@ public abstract class Ticket<K, E> implements DataSerializable {
         return plate;
     }
 
-    public E getIssueDate() {
+    public LocalDateTime getIssueDate() {
         return issueDate;
     }
 
@@ -54,7 +55,7 @@ public abstract class Ticket<K, E> implements DataSerializable {
         this.plate = plate;
     }
 
-    public void setIssueDate(E issueDate) {
+    public void setIssueDate(LocalDateTime issueDate) {
         this.issueDate = issueDate;
     }
 
