@@ -1,16 +1,11 @@
 package ar.edu.itba.pod.tpe2.client.utils.queries;
 
 import ar.edu.itba.pod.tpe2.collators.AllInfractionsCollator;
-import ar.edu.itba.pod.tpe2.collators.NYCAllInfractionsCollator;
 import ar.edu.itba.pod.tpe2.combiners.AllInfractionsCombinerFactory;
-import ar.edu.itba.pod.tpe2.combiners.NYCAllInfractionsCombinerFactory;
 import ar.edu.itba.pod.tpe2.mappers.AllInfractionsMapper;
-import ar.edu.itba.pod.tpe2.mappers.NYCAllInfractionsMapper;
 import ar.edu.itba.pod.tpe2.models.InfractionCount;
-import ar.edu.itba.pod.tpe2.models.NYCTicket;
 import ar.edu.itba.pod.tpe2.models.Ticket;
 import ar.edu.itba.pod.tpe2.reducers.AllInfractionsReducerFactory;
-import ar.edu.itba.pod.tpe2.reducers.NYCAllInfractionsReducerFactory;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.JobCompletableFuture;
@@ -21,7 +16,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("deprecation")

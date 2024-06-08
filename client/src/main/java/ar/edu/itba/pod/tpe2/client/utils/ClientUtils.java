@@ -14,8 +14,15 @@ import java.util.Map;
 
 public class ClientUtils {
 
-    private static final String GROUP_NAME = "g12";
-    private static final String GROUP_PASS = "g12-pass";
+    public static final String GROUP_NAME = "g12";
+    public static final String GROUP_PASS = "g12-pass";
+    public static final String NYC_INFRACTIONS = "infractionsNYC.csv";
+    public static final String CHI_INFRACTIONS = "infractionsCHI.csv";
+    public static final String QUERY1_JOB_NAME = "query1";
+    public static final String INFRACTIONS_MAP_NAME = "infractions-map";
+    public static final String TICKETS_MAP_NAME = "tickets-map";
+    public static final String NYC_TICKETS = "ticketsNYC.csv";
+    public static final String CHI_TICKETS = "ticketsCHI.csv";
     public static final String ADDRESSES = "addresses";
     public static final String CITY = "city";
     public static final String IN_PATH = "inPath";
