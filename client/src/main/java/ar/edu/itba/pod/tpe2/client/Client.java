@@ -4,9 +4,11 @@ import ar.edu.itba.pod.tpe2.client.utils.populators.CHIInfractionsPopulator;
 import ar.edu.itba.pod.tpe2.client.utils.populators.CHITicketsPopulator;
 import ar.edu.itba.pod.tpe2.client.utils.populators.NYCInfractionsPopulator;
 import ar.edu.itba.pod.tpe2.client.utils.populators.NYCTicketsPopulator;
+import ar.edu.itba.pod.tpe2.client.utils.populators.Populator;
 import ar.edu.itba.pod.tpe2.client.utils.queries.Query1;
 import ar.edu.itba.pod.tpe2.models.CHITicket;
 import ar.edu.itba.pod.tpe2.models.NYCTicket;
+import ar.edu.itba.pod.tpe2.models.Ticket;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
@@ -14,19 +16,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static ar.edu.itba.pod.tpe2.client.utils.ClientUtils.*;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 public class Client {
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
     public static void main(String[] args) {
         logger.info("hz-config Client Starting ...");
-        String addresses = "192.168.64.1:5701";
+        String addresses = "192.168.0.179:5701";
         HazelcastInstance hazelcastInstance = getHazelcastInstance(parseAddresses(addresses));
 
         String nycInfractionsPath = "../TPE2-datasets/infractionsNYC.csv";
         String nycInfractionsMapName = "nyc-infractions";
-        IMap<Integer, String> nycInfractions = hazelcastInstance.getMap(nycInfractionsMapName);
-        NYCInfractionsPopulator nycInfractionsPopulator = new NYCInfractionsPopulator(nycInfractionsPath, nycInfractions);
+        IMap<Integer, Ticket<Integer, Double, LocalDate>> nycInfractions = hazelcastInstance.getMap(nycInfractionsMapName);
+        Populator nycInfractionsPopulator = new NYCTicketsPopulator(nycInfractionsPath, nycInfractions);
         logger.info("Inicio de la lectura del archivo: " + nycInfractionsPath);
         nycInfractionsPopulator.run();
         logger.info("Fin de la lectura del archivo: " + nycInfractionsPath);
@@ -41,7 +44,7 @@ public class Client {
 
         String nycTicketsPath = "../TPE2-datasets/ticketsNYC.csv";
         String nycTicketsMapName = "nyc-tickets";
-        IMap<Integer, NYCTicket> nycTickets = hazelcastInstance.getMap(nycTicketsMapName);
+        IMap<Integer, Ticket<Integer, Double, LocalDate>> nycTickets = hazelcastInstance.getMap(nycTicketsMapName);
         NYCTicketsPopulator nycTicketsPopulator = new NYCTicketsPopulator(nycTicketsPath, nycTickets);
         logger.info("Inicio de la lectura del archivo: " + nycTicketsPath);
         nycTicketsPopulator.run();
