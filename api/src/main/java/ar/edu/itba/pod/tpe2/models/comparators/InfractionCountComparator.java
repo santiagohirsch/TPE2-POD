@@ -1,4 +1,6 @@
-package ar.edu.itba.pod.tpe2.models;
+package ar.edu.itba.pod.tpe2.models.comparators;
+
+import ar.edu.itba.pod.tpe2.models.InfractionCount;
 
 import java.util.Comparator;
 

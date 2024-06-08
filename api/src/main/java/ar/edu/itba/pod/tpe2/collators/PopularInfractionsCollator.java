@@ -1,7 +1,7 @@
 package ar.edu.itba.pod.tpe2.collators;
 
 import ar.edu.itba.pod.tpe2.models.InfractionCount;
-import ar.edu.itba.pod.tpe2.models.InfractionCountComparator;
+import ar.edu.itba.pod.tpe2.models.comparators.InfractionCountComparator;
 import ar.edu.itba.pod.tpe2.models.Pair;
 import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Collator;
