@@ -19,6 +19,7 @@ public class ClientUtils {
     public static final String NYC_INFRACTIONS = "infractionsNYC.csv";
     public static final String CHI_INFRACTIONS = "infractionsCHI.csv";
     public static final String QUERY1_JOB_NAME = "query1";
+    public static final String QUERY2_JOB_NAME = "query2";
     public static final String INFRACTIONS_MAP_NAME = "infractions-map";
     public static final String TICKETS_MAP_NAME = "tickets-map";
     public static final String NYC_TICKETS = "ticketsNYC.csv";

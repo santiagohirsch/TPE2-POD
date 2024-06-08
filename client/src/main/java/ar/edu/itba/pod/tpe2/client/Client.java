@@ -6,6 +6,7 @@ import ar.edu.itba.pod.tpe2.client.utils.populators.keyParsers.NYCInfractionPars
 import ar.edu.itba.pod.tpe2.client.utils.populators.ticketFactories.CHITicketFactory;
 import ar.edu.itba.pod.tpe2.client.utils.populators.ticketFactories.NYCTicketFactory;
 import ar.edu.itba.pod.tpe2.client.utils.queries.Query1;
+import ar.edu.itba.pod.tpe2.client.utils.queries.Query2;
 import ar.edu.itba.pod.tpe2.models.*;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
@@ -24,11 +25,13 @@ public class Client {
         String addresses = "192.168.1.137:5701";
         HazelcastInstance hazelcastInstance = getHazelcastInstance(parseAddresses(addresses));
 
-        String cityName = "NYC";
+        String cityName = "CHI";
         StringBuilder infractionsPath = new StringBuilder("../TPE2-datasets/");
         StringBuilder ticketsPath = new StringBuilder("../TPE2-datasets/");
         String outPath = "../TPE2-out/";
+        String query = "query2";
 
+        Runnable queryInstance = null;
         switch (cityName.toUpperCase()) {
             case "NYC" -> {
                 IMap<Integer, String> nycInfractionsMap = hazelcastInstance.getMap(INFRACTIONS_MAP_NAME);
@@ -37,16 +40,22 @@ public class Client {
                 logger.info("Inicio de la lectura del archivo: " + infractionsPath);
                 nycInfractionsPopulator.run();
                 logger.info("Fin de la lectura del archivo: " + infractionsPath);
+
                 IMap<Integer, NYCTicket> nycTicketsMap = hazelcastInstance.getMap(TICKETS_MAP_NAME);
                 ticketsPath.append(NYC_TICKETS);
                 TicketsPopulator<NYCTicket> nycTicketsPopulator = new TicketsPopulator<>(ticketsPath.toString(), nycTicketsMap, new NYCTicketFactory());
                 logger.info("Inicio de la lectura del archivo: " + ticketsPath);
                 nycTicketsPopulator.run();
                 logger.info("Fin de la lectura del archivo: " + ticketsPath);
-                Query1<Integer, Double, LocalDate, NYCTicket> nycQuery1 = new Query1<>(QUERY1_JOB_NAME, hazelcastInstance, nycInfractionsMap, nycTicketsMap, outPath);
-                logger.info("Inicio del trabajo map/reduce");
-                nycQuery1.run();
-                logger.info("Fin del trabajo map/reduce");
+
+                switch (query) {
+                    case "query1" -> queryInstance = new Query1<>(QUERY1_JOB_NAME, hazelcastInstance, nycInfractionsMap, nycTicketsMap, outPath);
+                    case "query2" -> queryInstance = new Query2<>(QUERY2_JOB_NAME, hazelcastInstance, nycInfractionsMap, nycTicketsMap, outPath);
+                    default -> {
+                        logger.error("Invalid query");
+                        System.exit(1);
+                    }
+                }
             }
             case "CHI" -> {
                 IMap<String, String> chiInfractionsMap = hazelcastInstance.getMap(INFRACTIONS_MAP_NAME);
@@ -55,16 +64,28 @@ public class Client {
                 logger.info("Inicio de la lectura del archivo: " + infractionsPath);
                 chiInfractionsPopulator.run();
                 logger.info("Fin de la lectura del archivo " + infractionsPath);
+
                 IMap<Integer, CHITicket> chiTicketsMap = hazelcastInstance.getMap(TICKETS_MAP_NAME);
                 ticketsPath.append(CHI_TICKETS);
                 TicketsPopulator<CHITicket> chiTicketsPopulator = new TicketsPopulator<>(ticketsPath.toString(), chiTicketsMap, new CHITicketFactory());
                 logger.info("Inicio de la lectura del archivo: " + ticketsPath);
                 chiTicketsPopulator.run();
                 logger.info("Fin de la lectura del archivo: " + ticketsPath);
-                Query1<String, Integer, LocalDateTime, CHITicket> chiQuery1 = new Query1<>(QUERY1_JOB_NAME, hazelcastInstance, chiInfractionsMap, chiTicketsMap, outPath);
-                chiQuery1.run();
+
+                switch (query) {
+                    case "query1" -> queryInstance = new Query1<>(QUERY1_JOB_NAME, hazelcastInstance, chiInfractionsMap, chiTicketsMap, outPath);
+                    case "query2" -> queryInstance = new Query2<>(QUERY2_JOB_NAME, hazelcastInstance, chiInfractionsMap, chiTicketsMap, outPath);
+                    default -> {
+                        logger.error("Invalid query");
+                        System.exit(1);
+                    }
+                }
             }
         }
+
+        logger.info("Inicio del trabajo map/reduce");
+        queryInstance.run();
+        logger.info("Fin del trabajo map/reduce");
 
         // Shutdown
         HazelcastClient.shutdownAll();
