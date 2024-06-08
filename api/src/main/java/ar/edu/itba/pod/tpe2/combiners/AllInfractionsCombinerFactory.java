@@ -4,14 +4,14 @@ import com.hazelcast.mapreduce.Combiner;
 import com.hazelcast.mapreduce.CombinerFactory;
 
 @SuppressWarnings("deprecation")
-public class NYCAllInfractionsCombinerFactory implements CombinerFactory<Integer, Integer, Integer> {
+public class AllInfractionsCombinerFactory<K> implements CombinerFactory<K, Integer, Integer> {
 
     @Override
-    public Combiner<Integer, Integer> newCombiner(Integer integer) {
-        return new NYCAllInfractionsCombiner();
+    public Combiner<Integer, Integer> newCombiner(K key) {
+        return new AllInfractionsCombiner();
     }
 
-    private static class NYCAllInfractionsCombiner extends Combiner<Integer, Integer> {
+    private static class AllInfractionsCombiner extends Combiner<Integer, Integer> {
         private int sum;
 
         @Override

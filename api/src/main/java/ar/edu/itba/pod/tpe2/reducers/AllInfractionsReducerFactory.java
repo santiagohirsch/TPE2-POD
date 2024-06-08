@@ -4,14 +4,14 @@ import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
 @SuppressWarnings("deprecation")
-public class NYCAllInfractionsReducerFactory implements ReducerFactory<Integer, Integer, Integer> {
+public class AllInfractionsReducerFactory<K> implements ReducerFactory<K, Integer, Integer> {
 
     @Override
-    public Reducer<Integer, Integer> newReducer(Integer integer) {
-        return new NYCAllInfractionsReducer();
+    public Reducer<Integer, Integer> newReducer(K key) {
+        return new AllInfractionsReducer();
     }
 
-    private static class NYCAllInfractionsReducer extends Reducer<Integer, Integer> {
+    private static class AllInfractionsReducer extends Reducer<Integer, Integer> {
         private int sum;
 
         @Override

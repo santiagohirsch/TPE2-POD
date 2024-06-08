@@ -12,16 +12,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("deprecation")
-public class NYCAllInfractionsCollator implements Collator<Map.Entry<Integer, Integer>, List<InfractionCount>> {
-    private final IMap<Integer, String> infractions;
+public class AllInfractionsCollator<K> implements Collator<Map.Entry<K, Integer>, List<InfractionCount>> {
+    private final IMap<K, String> infractions;
 
-    public NYCAllInfractionsCollator(IMap<Integer, String> infractions) {
+    public AllInfractionsCollator(IMap<K, String> infractions) {
         this.infractions = infractions;
     }
 
     @Override
-    public List<InfractionCount> collate(Iterable<Map.Entry<Integer, Integer>> iterable) {
+    public List<InfractionCount> collate(Iterable<Map.Entry<K, Integer>> iterable) {
         List<InfractionCount> allInfractions = new ArrayList<>();
+
         List<InfractionCount> finalAllInfractions = allInfractions;
         iterable.forEach(entry -> {
             String infractionName = infractions.get(entry.getKey());

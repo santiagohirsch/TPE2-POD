@@ -1,5 +1,6 @@
 package ar.edu.itba.pod.tpe2.client.utils.populators;
 
+import ar.edu.itba.pod.tpe2.models.*;
 import com.hazelcast.core.IMap;
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
@@ -9,8 +10,12 @@ import com.opencsv.CSVReaderBuilder;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public abstract class Populator<K, V> implements Runnable {
     private static final int BATCH_SIZE = 1024;
@@ -47,8 +52,6 @@ public abstract class Populator<K, V> implements Runnable {
         hazelcastIMap.putAll(currentMap);
     }
 
-    protected abstract IMap.Entry<K, V> consumeLine(String[] line);
-
     @Override
     public void run() {
         String[] line;
@@ -82,4 +85,7 @@ public abstract class Populator<K, V> implements Runnable {
             throw new RuntimeException(e);
         }
     }
+
+    protected abstract IMap.Entry<K, V> consumeLine(String[] line);
+
 }
