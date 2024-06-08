@@ -7,6 +7,7 @@ import ar.edu.itba.pod.tpe2.client.utils.populators.ticketFactories.CHITicketFac
 import ar.edu.itba.pod.tpe2.client.utils.populators.ticketFactories.NYCTicketFactory;
 import ar.edu.itba.pod.tpe2.client.utils.queries.Query1;
 import ar.edu.itba.pod.tpe2.client.utils.queries.Query2;
+import ar.edu.itba.pod.tpe2.client.utils.queries.Query3;
 import ar.edu.itba.pod.tpe2.models.*;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
@@ -29,7 +30,8 @@ public class Client {
         StringBuilder infractionsPath = new StringBuilder("../TPE2-datasets/");
         StringBuilder ticketsPath = new StringBuilder("../TPE2-datasets/");
         String outPath = "../TPE2-out/";
-        String query = "query2";
+        String query = "query3";
+        int n = 10; //query3 -> top n agencies
 
         Runnable queryInstance = null;
         switch (cityName.toUpperCase()) {
@@ -51,6 +53,7 @@ public class Client {
                 switch (query) {
                     case "query1" -> queryInstance = new Query1<>(QUERY1_JOB_NAME, hazelcastInstance, nycInfractionsMap, nycTicketsMap, outPath);
                     case "query2" -> queryInstance = new Query2<>(QUERY2_JOB_NAME, hazelcastInstance, nycInfractionsMap, nycTicketsMap, outPath);
+                    case "query3" -> queryInstance = new Query3<>(QUERY3_JOB_NAME, hazelcastInstance, nycTicketsMap, outPath, n);
                     default -> {
                         logger.error("Invalid query");
                         System.exit(1);
@@ -75,6 +78,7 @@ public class Client {
                 switch (query) {
                     case "query1" -> queryInstance = new Query1<>(QUERY1_JOB_NAME, hazelcastInstance, chiInfractionsMap, chiTicketsMap, outPath);
                     case "query2" -> queryInstance = new Query2<>(QUERY2_JOB_NAME, hazelcastInstance, chiInfractionsMap, chiTicketsMap, outPath);
+                    case "query3" -> queryInstance = new Query3<>(QUERY3_JOB_NAME, hazelcastInstance, chiTicketsMap, outPath, n);
                     default -> {
                         logger.error("Invalid query");
                         System.exit(1);
