@@ -1,6 +1,7 @@
 package ar.edu.itba.pod.tpe2.collators;
 
 import ar.edu.itba.pod.tpe2.models.InfractionCount;
+import ar.edu.itba.pod.tpe2.models.InfractionCountComparator;
 import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Collator;
 
@@ -35,15 +36,4 @@ public class AllInfractionsCollator<K> implements Collator<Map.Entry<K, Integer>
         return allInfractions;
     }
 
-    private static class InfractionCountComparator implements Comparator<InfractionCount> {
-        @Override
-        public int compare(InfractionCount o1, InfractionCount o2) {
-            int ticketCountCmp = Integer.compare(o2.getTicketsAmount(), o1.getTicketsAmount());
-            if (ticketCountCmp != 0) {
-                return ticketCountCmp;
-            }
-
-            return o1.getInfractionName().compareTo(o2.getInfractionName());
-        }
-    }
 }
