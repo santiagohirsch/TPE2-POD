@@ -8,12 +8,12 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-public class CHITicket extends Ticket<String, Integer, LocalDateTime> {
+public class CHITicket extends Ticket<String, LocalDateTime> {
     public CHITicket() {
         //Hazelcast
     }
 
-    public CHITicket(String plate, LocalDateTime issueDate, String infractionCode, Integer fineAmount, String countyName, String issuingAgency) {
+    public CHITicket(String plate, LocalDateTime issueDate, String infractionCode, Double fineAmount, String countyName, String issuingAgency) {
         super(plate, issueDate, infractionCode, fineAmount, countyName, issuingAgency);
     }
 
@@ -23,7 +23,7 @@ public class CHITicket extends Ticket<String, Integer, LocalDateTime> {
         objectDataOutput.writeUTF(getPlate());
         objectDataOutput.writeUTF(getInfractionCode());
         objectDataOutput.writeUTF(getIssuingAgency());
-        objectDataOutput.writeInt(getFineAmount());
+        objectDataOutput.writeDouble(getFineAmount());
         objectDataOutput.writeUTF(getCountyName());
     }
 
@@ -33,7 +33,7 @@ public class CHITicket extends Ticket<String, Integer, LocalDateTime> {
         setPlate(objectDataInput.readUTF());
         setInfractionCode(objectDataInput.readUTF());
         setIssuingAgency(objectDataInput.readUTF());
-        setFineAmount(objectDataInput.readInt());
+        setFineAmount(objectDataInput.readDouble());
         setCountyName(objectDataInput.readUTF());
     }
 }

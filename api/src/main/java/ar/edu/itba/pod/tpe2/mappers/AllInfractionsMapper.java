@@ -8,7 +8,7 @@ import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 
 @SuppressWarnings("deprecation")
-public class AllInfractionsMapper<K, V, E, T extends Ticket<K, V, E>> implements Mapper<Integer, T, K, Integer>, HazelcastInstanceAware {
+public class AllInfractionsMapper<K, E, T extends Ticket<K, E>> implements Mapper<Integer, T, K, Integer>, HazelcastInstanceAware {
     private transient IMap<K, String> infractionsMap;
     private static final String INFRACTIONS_MAP_NAME = "infractions-map";
 

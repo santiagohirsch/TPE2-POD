@@ -10,7 +10,7 @@ import com.hazelcast.mapreduce.Mapper;
 
 
 @SuppressWarnings("deprecation")
-public class PopularInfractionsMapper<K, V, E, T extends Ticket<K, V, E>> implements Mapper<Integer, T, Pair<String, K>, Integer>, HazelcastInstanceAware {
+public class PopularInfractionsMapper<K, E, T extends Ticket<K, E>> implements Mapper<Integer, T, Pair<String, K>, Integer>, HazelcastInstanceAware {
 
     private transient IMap<K, String> infractionsMap;
     private static final String INFRACTIONS_MAP_NAME = "infractions-map";

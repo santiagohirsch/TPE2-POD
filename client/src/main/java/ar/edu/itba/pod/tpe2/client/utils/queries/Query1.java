@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("deprecation")
-public class Query1<K, V, E, T extends Ticket<K, V, E>> implements Runnable {
+public class Query1<K, E, T extends Ticket<K, E>> implements Runnable {
     private static final String OUTPUT_HEADER = "Infraction;Tickets\n";
     private static final String OUTPUT_NAME = "query1.csv";
 

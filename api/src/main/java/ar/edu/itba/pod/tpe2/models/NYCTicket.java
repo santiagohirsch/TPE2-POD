@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-public class NYCTicket extends Ticket<Integer, Double, LocalDate> {
+public class NYCTicket extends Ticket<Integer, LocalDate> {
     public NYCTicket() {
         //Hazelcast
     }

@@ -22,7 +22,7 @@ import java.util.StringJoiner;
 import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("deprecation")
-public class Query2 <K, V, E, T extends Ticket<K, V, E>> implements Runnable {
+public class Query2 <K, E, T extends Ticket<K, E>> implements Runnable {
     private static final String OUTPUT_HEADER = "County;InfractionTop1;InfractionTop2;InfractionTop3\n";
     private static final String OUTPUT_NAME = "query2.csv";
 

@@ -13,7 +13,7 @@ public class CHITicketFactory implements Function<String[], CHITicket> {
         String licensePlateNumber = line[1];
         String violationCode = line[2];
         String unitDescription = line[3];
-        int fineLevel1Amount = Integer.parseInt(line[4]);
+        Double fineLevel1Amount = (double) Integer.parseInt(line[4]);
         String communityAreaName = line[5];
         return new CHITicket(licensePlateNumber, issueDate, violationCode, fineLevel1Amount, communityAreaName, unitDescription);
     }
