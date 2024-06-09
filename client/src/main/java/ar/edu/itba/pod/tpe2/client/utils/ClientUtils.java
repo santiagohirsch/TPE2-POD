@@ -22,6 +22,7 @@ public class ClientUtils {
     public static final String QUERY2_JOB_NAME = "query2";
     public static final String QUERY3_JOB_NAME = "query3";
     public static final String QUERY4_JOB_NAME = "query4";
+    public static final String QUERY5_JOB_NAME = "query5";
     public static final String INFRACTIONS_MAP_NAME = "infractions-map";
     public static final String TICKETS_MAP_NAME = "tickets-map";
     public static final String NYC_TICKETS = "ticketsNYC.csv";
