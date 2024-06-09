@@ -9,7 +9,7 @@ public class TopPlateReducerFactory implements ReducerFactory<Pair<String, Strin
 
     @Override
     public Reducer<Integer, Integer> newReducer(Pair<String, String> stringStringPair) {
-        return null;
+        return new TopPlateReducer();
     }
 
     private static class TopPlateReducer extends Reducer<Integer, Integer> {

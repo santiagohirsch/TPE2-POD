@@ -8,6 +8,7 @@ import ar.edu.itba.pod.tpe2.client.utils.populators.ticketFactories.NYCTicketFac
 import ar.edu.itba.pod.tpe2.client.utils.queries.Query1;
 import ar.edu.itba.pod.tpe2.client.utils.queries.Query2;
 import ar.edu.itba.pod.tpe2.client.utils.queries.Query3;
+import ar.edu.itba.pod.tpe2.client.utils.queries.Query4;
 import ar.edu.itba.pod.tpe2.models.*;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
@@ -23,15 +24,18 @@ public class Client {
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
     public static void main(String[] args) {
         logger.info("hz-config Client Starting ...");
-        String addresses = "192.168.1.137:5701";
+        String addresses = "192.168.0.179:5701";
         HazelcastInstance hazelcastInstance = getHazelcastInstance(parseAddresses(addresses));
 
-        String cityName = "NYC";
+        String cityName = "CHI";
         StringBuilder infractionsPath = new StringBuilder("../TPE2-datasets/");
         StringBuilder ticketsPath = new StringBuilder("../TPE2-datasets/");
         String outPath = "../TPE2-out/";
-        String query = "query3";
+        String query = "query4";
         int n = 10; //query3 -> top n agencies
+        //query4 -> from to
+        LocalDateTime from = LocalDateTime.of(2004, 1, 1, 0, 0, 0);
+        LocalDateTime to = LocalDateTime.of(2004, 12, 31, 23, 59, 59);
 
         Runnable queryInstance = null;
         switch (cityName.toUpperCase()) {
@@ -54,10 +58,12 @@ public class Client {
                     case "query1" -> queryInstance = new Query1<>(QUERY1_JOB_NAME, hazelcastInstance, nycInfractionsMap, nycTicketsMap, outPath);
                     case "query2" -> queryInstance = new Query2<>(QUERY2_JOB_NAME, hazelcastInstance, nycInfractionsMap, nycTicketsMap, outPath);
                     case "query3" -> queryInstance = new Query3<>(QUERY3_JOB_NAME, hazelcastInstance, nycTicketsMap, outPath, n);
+                    case "query4" -> queryInstance = new Query4<>(QUERY4_JOB_NAME, hazelcastInstance, nycTicketsMap, outPath, from, to);
                     default -> {
                         logger.error("Invalid query");
                         System.exit(1);
                     }
+
                 }
             }
             case "CHI" -> {
@@ -79,6 +85,7 @@ public class Client {
                     case "query1" -> queryInstance = new Query1<>(QUERY1_JOB_NAME, hazelcastInstance, chiInfractionsMap, chiTicketsMap, outPath);
                     case "query2" -> queryInstance = new Query2<>(QUERY2_JOB_NAME, hazelcastInstance, chiInfractionsMap, chiTicketsMap, outPath);
                     case "query3" -> queryInstance = new Query3<>(QUERY3_JOB_NAME, hazelcastInstance, chiTicketsMap, outPath, n);
+                    case "query4" -> queryInstance = new Query4<>(QUERY4_JOB_NAME, hazelcastInstance, chiTicketsMap, outPath, from, to);
                     default -> {
                         logger.error("Invalid query");
                         System.exit(1);
