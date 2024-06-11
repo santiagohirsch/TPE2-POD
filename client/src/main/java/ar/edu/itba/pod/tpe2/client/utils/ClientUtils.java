@@ -1,5 +1,6 @@
 package ar.edu.itba.pod.tpe2.client.utils;
 
+import ar.edu.itba.pod.tpe2.client.Client;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.ClientNetworkConfig;
@@ -7,10 +8,13 @@ import com.hazelcast.config.GroupConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.LogRecord;
+import java.util.logging.SimpleFormatter;
 
 public class ClientUtils {
 
@@ -72,4 +76,37 @@ public class ClientUtils {
     public static List<String> parseAddresses(String addresses) {
         return Arrays.asList(addresses.split(";"));
     }
+
+    public static SimpleFormatter getFormatter() {
+        return new SimpleFormatter() {
+            private final String format = "dd/MM/yyyy HH:mm:ss:SSSS";
+
+            @Override
+            public String format(LogRecord record) {
+                String message = record.getMessage();
+                String level = record.getLevel().toString();
+                String thread = Thread.currentThread().getName();
+                String className = extractClassName(record.getSourceClassName());
+                // TODO: agregar linea de donde se llamo, tiene que quedar asi:
+                // TODO: format level [thread] class (class.java:line) - message
+                return String.format(
+                        "%s %s [%s] %s - %s\n",
+                        new SimpleDateFormat(format).format(record.getMillis()),
+                        level,
+                        thread,
+                        className,
+                        message
+                );
+            }
+        };
+    }
+
+    private static String extractClassName(String sourceClassName) {
+        int lastIndex = sourceClassName.lastIndexOf(".");
+        if (lastIndex != -1) {
+            return sourceClassName.substring(lastIndex + 1);
+        }
+        return sourceClassName;
+    }
+
 }
