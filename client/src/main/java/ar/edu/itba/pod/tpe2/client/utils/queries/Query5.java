@@ -3,7 +3,6 @@ package ar.edu.itba.pod.tpe2.client.utils.queries;
 import ar.edu.itba.pod.tpe2.collators.InfractionGroupsCollator;
 import ar.edu.itba.pod.tpe2.combiners.InfractionGroupsCombinerFactory;
 import ar.edu.itba.pod.tpe2.mappers.InfractionGroupsMapper;
-import ar.edu.itba.pod.tpe2.models.InfractionCount;
 import ar.edu.itba.pod.tpe2.models.Pair;
 import ar.edu.itba.pod.tpe2.models.Ticket;
 import ar.edu.itba.pod.tpe2.reducers.InfractionGroupsReducerFactory;
@@ -19,6 +18,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
 @SuppressWarnings("deprecation")
 public class Query5<K, T extends Ticket<K>> implements Runnable {
@@ -30,13 +30,15 @@ public class Query5<K, T extends Ticket<K>> implements Runnable {
     private final IMap<K, String> infractions;
     private final IMap<Integer, T> tickets;
     private final String outputPath;
+    private final Logger performanceLogger;
 
-    public Query5(String jobName, HazelcastInstance hazelcastInstance, IMap<K, String> infractions, IMap<Integer, T> tickets, String outputPath) {
+    public Query5(String jobName, HazelcastInstance hazelcastInstance, IMap<K, String> infractions, IMap<Integer, T> tickets, String outputPath, Logger performanceLogger) {
         this.jobName = jobName;
         this.hazelcastInstance = hazelcastInstance;
         this.infractions = infractions;
         this.tickets = tickets;
         this.outputPath = outputPath;
+        this.performanceLogger = performanceLogger;
     }
 
 
@@ -44,6 +46,8 @@ public class Query5<K, T extends Ticket<K>> implements Runnable {
     public void run() {
         JobTracker jobTracker = hazelcastInstance.getJobTracker(jobName);
         KeyValueSource<Integer, T> source = KeyValueSource.fromMap(tickets);
+
+        performanceLogger.info("Inicio del trabajo map/reduce");
         JobCompletableFuture<Map<Integer, List<Pair<String, String>>>> future = jobTracker.newJob(source)
                 .mapper(new InfractionGroupsMapper<>())
                 .combiner(new InfractionGroupsCombinerFactory<>())
@@ -58,6 +62,7 @@ public class Query5<K, T extends Ticket<K>> implements Runnable {
         }
 
         writeResultToCSV(result);
+        performanceLogger.info("Fin del trabajo map/reduce");
     }
 
     private void writeResultToCSV(Map<Integer, List<Pair<String, String>>> result) {

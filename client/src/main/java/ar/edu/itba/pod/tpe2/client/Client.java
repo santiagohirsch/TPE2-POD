@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import static ar.edu.itba.pod.tpe2.client.utils.ClientUtils.*;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.FileHandler;
@@ -76,21 +75,21 @@ public class Client {
                 performanceLogger.info("Fin de la lectura del archivo: " + ticketsPath);
 
                 switch (query) {
-                    case "query1" -> queryInstance = new Query1<>(QUERY1_JOB_NAME, hazelcastInstance, nycInfractionsMap, nycTicketsMap, outPath);
-                    case "query2" -> queryInstance = new Query2<>(QUERY2_JOB_NAME, hazelcastInstance, nycInfractionsMap, nycTicketsMap, outPath);
+                    case "query1" -> queryInstance = new Query1<>(QUERY1_JOB_NAME, hazelcastInstance, nycInfractionsMap, nycTicketsMap, outPath, performanceLogger);
+                    case "query2" -> queryInstance = new Query2<>(QUERY2_JOB_NAME, hazelcastInstance, nycInfractionsMap, nycTicketsMap, outPath, performanceLogger);
                     case "query3" -> {
                         String n = argsMap.get(N);
                         checkNullArgument(n, N_ERROR_MSG);
-                        queryInstance = new Query3<>(QUERY3_JOB_NAME, hazelcastInstance, nycTicketsMap, outPath, n);
+                        queryInstance = new Query3<>(QUERY3_JOB_NAME, hazelcastInstance, nycTicketsMap, outPath, n, performanceLogger);
                     }
                     case "query4" -> {
                         String from = argsMap.get(FROM);
                         String to = argsMap.get(TO);
                         checkNullArgument(from, FROM_ERROR_MSG);
                         checkNullArgument(to, TO_ERROR_MSG);
-                        queryInstance = new Query4<>(QUERY4_JOB_NAME, hazelcastInstance, nycTicketsMap, outPath, from, to);
+                        queryInstance = new Query4<>(QUERY4_JOB_NAME, hazelcastInstance, nycTicketsMap, outPath, from, to, performanceLogger);
                     }
-                    case "query5" -> queryInstance = new Query5<>(QUERY5_JOB_NAME, hazelcastInstance, nycInfractionsMap, nycTicketsMap, outPath);
+                    case "query5" -> queryInstance = new Query5<>(QUERY5_JOB_NAME, hazelcastInstance, nycInfractionsMap, nycTicketsMap, outPath, performanceLogger);
                     default -> {
                         logger.error("Invalid query");
                         System.exit(1);
@@ -116,21 +115,21 @@ public class Client {
                 performanceLogger.info("Fin de la lectura del archivo: " + ticketsPath);
 
                 switch (query) {
-                    case "query1" -> queryInstance = new Query1<>(QUERY1_JOB_NAME, hazelcastInstance, chiInfractionsMap, chiTicketsMap, outPath);
-                    case "query2" -> queryInstance = new Query2<>(QUERY2_JOB_NAME, hazelcastInstance, chiInfractionsMap, chiTicketsMap, outPath);
+                    case "query1" -> queryInstance = new Query1<>(QUERY1_JOB_NAME, hazelcastInstance, chiInfractionsMap, chiTicketsMap, outPath, performanceLogger);
+                    case "query2" -> queryInstance = new Query2<>(QUERY2_JOB_NAME, hazelcastInstance, chiInfractionsMap, chiTicketsMap, outPath, performanceLogger);
                     case "query3" -> {
                         String n = argsMap.get(N);
                         checkNullArgument(n, N_ERROR_MSG);
-                        queryInstance = new Query3<>(QUERY3_JOB_NAME, hazelcastInstance, chiTicketsMap, outPath, n);
+                        queryInstance = new Query3<>(QUERY3_JOB_NAME, hazelcastInstance, chiTicketsMap, outPath, n, performanceLogger);
                     }
                     case "query4" -> {
                         String from = argsMap.get(FROM);
                         String to = argsMap.get(TO);
                         checkNullArgument(from, FROM_ERROR_MSG);
                         checkNullArgument(to, TO_ERROR_MSG);
-                        queryInstance = new Query4<>(QUERY4_JOB_NAME, hazelcastInstance, chiTicketsMap, outPath, from, to);
+                        queryInstance = new Query4<>(QUERY4_JOB_NAME, hazelcastInstance, chiTicketsMap, outPath, from, to, performanceLogger);
                     }
-                    case "query5" -> queryInstance = new Query5<>(QUERY5_JOB_NAME, hazelcastInstance, chiInfractionsMap, chiTicketsMap, outPath);
+                    case "query5" -> queryInstance = new Query5<>(QUERY5_JOB_NAME, hazelcastInstance, chiInfractionsMap, chiTicketsMap, outPath, performanceLogger);
                     default -> {
                         logger.error("Invalid query");
                         System.exit(1);
@@ -139,9 +138,7 @@ public class Client {
             }
         }
 
-        performanceLogger.info("Inicio del trabajo map/reduce");
         queryInstance.run();
-        performanceLogger.info("Fin del trabajo map/reduce");
 
         // Shutdown
         HazelcastClient.shutdownAll();

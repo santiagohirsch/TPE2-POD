@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
 @SuppressWarnings("deprecation")
 public class Query4<K, T extends Ticket<K>> implements Runnable {
@@ -33,20 +34,24 @@ public class Query4<K, T extends Ticket<K>> implements Runnable {
     private final String outputPath;
     private final LocalDateTime from;
     private final LocalDateTime to;
+    private final Logger performanceLogger;
 
-    public Query4(String jobName, HazelcastInstance hazelcastInstance, IMap<Integer, T> tickets, String outputPath, String from, String to) {
+    public Query4(String jobName, HazelcastInstance hazelcastInstance, IMap<Integer, T> tickets, String outputPath, String from, String to, Logger performanceLogger) {
         this.jobName = jobName;
         this.hazelcastInstance = hazelcastInstance;
         this.tickets = tickets;
         this.outputPath = outputPath;
         this.from = LocalDate.parse(from, FORMAT).atStartOfDay();
         this.to = LocalDate.parse(to, FORMAT).atTime(23, 59, 59);
+        this.performanceLogger = performanceLogger;
     }
 
     @Override
     public void run() {
         JobTracker jobTracker = hazelcastInstance.getJobTracker(jobName);
         KeyValueSource<Integer, T> source = KeyValueSource.fromMap(tickets);
+
+        performanceLogger.info("Inicio del trabajo map/reduce");
         JobCompletableFuture<List<CountyPlateCount>> future = jobTracker.newJob(source)
                 .mapper(new TopPlateMapper<>(from, to))
                 .combiner(new TopPlateCombinerFactory())
@@ -62,6 +67,7 @@ public class Query4<K, T extends Ticket<K>> implements Runnable {
         }
 
         writeResultToCSV(result);
+        performanceLogger.info("Fin del trabajo map/reduce");
     }
 
     private void writeResultToCSV(List<CountyPlateCount> result) {

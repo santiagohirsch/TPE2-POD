@@ -4,7 +4,6 @@ import ar.edu.itba.pod.tpe2.collators.TopAgenciesCollator;
 import ar.edu.itba.pod.tpe2.combiners.TopAgenciesCombinerFactory;
 import ar.edu.itba.pod.tpe2.mappers.TopAgenciesMapper;
 import ar.edu.itba.pod.tpe2.models.AgencyPercentage;
-import ar.edu.itba.pod.tpe2.models.InfractionCount;
 import ar.edu.itba.pod.tpe2.models.Ticket;
 import ar.edu.itba.pod.tpe2.reducers.TopAgenciesReducerFactory;
 import com.hazelcast.core.HazelcastInstance;
@@ -18,6 +17,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
 @SuppressWarnings("deprecation")
 public class Query3 <K, T extends Ticket<K>> implements Runnable {
@@ -29,19 +29,23 @@ public class Query3 <K, T extends Ticket<K>> implements Runnable {
     private final IMap<Integer, T> tickets;
     private final String outputPath;
     private final int n;
+    private final Logger performanceLogger;
 
-    public Query3(String jobName, HazelcastInstance hazelcastInstance, IMap<Integer, T> tickets, String outputPath, String n) {
+    public Query3(String jobName, HazelcastInstance hazelcastInstance, IMap<Integer, T> tickets, String outputPath, String n, Logger performanceLogger) {
         this.jobName = jobName;
         this.hazelcastInstance = hazelcastInstance;
         this.tickets = tickets;
         this.outputPath = outputPath;
         this.n = Integer.parseInt(n);
+        this.performanceLogger = performanceLogger;
     }
 
     @Override
     public void run() {
         JobTracker jobTracker = hazelcastInstance.getJobTracker(jobName);
         KeyValueSource<Integer, T> source = KeyValueSource.fromMap(tickets);
+
+        performanceLogger.info("Inicio del trabajo map/reduce");
         JobCompletableFuture<List<AgencyPercentage>> future = jobTracker.newJob(source)
                 .mapper(new TopAgenciesMapper<>())
                 .combiner(new TopAgenciesCombinerFactory())
@@ -57,6 +61,7 @@ public class Query3 <K, T extends Ticket<K>> implements Runnable {
         }
 
         writeResultToCSV(result);
+        performanceLogger.info("Fin del trabajo map/reduce");
     }
 
     private void writeResultToCSV(List<AgencyPercentage> result) {

@@ -17,6 +17,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
 @SuppressWarnings("deprecation")
 public class Query1<K, T extends Ticket<K>> implements Runnable {
@@ -28,19 +29,23 @@ public class Query1<K, T extends Ticket<K>> implements Runnable {
     private final IMap<K, String> infractions;
     private final IMap<Integer, T> tickets;
     private final String outputPath;
+    private final Logger performanceLogger;
 
-    public Query1(String jobName, HazelcastInstance hazelcastInstance, IMap<K, String> infractions, IMap<Integer, T> tickets, String outputPath) {
+    public Query1(String jobName, HazelcastInstance hazelcastInstance, IMap<K, String> infractions, IMap<Integer, T> tickets, String outputPath, Logger performanceLogger) {
         this.jobName = jobName;
         this.hazelcastInstance = hazelcastInstance;
         this.infractions = infractions;
         this.tickets = tickets;
         this.outputPath = outputPath;
+        this.performanceLogger = performanceLogger;
     }
 
     @Override
     public void run() {
         JobTracker jobTracker = hazelcastInstance.getJobTracker(jobName);
         KeyValueSource<Integer, T> source = KeyValueSource.fromMap(tickets);
+
+        performanceLogger.info("Inicio del trabajo map/reduce");
         JobCompletableFuture<List<InfractionCount>> future = jobTracker.newJob(source)
                 .mapper(new AllInfractionsMapper<>())
                 .combiner(new AllInfractionsCombinerFactory<>())
@@ -56,6 +61,7 @@ public class Query1<K, T extends Ticket<K>> implements Runnable {
         }
 
         writeResultToCSV(result);
+        performanceLogger.info("Fin del trabajo map/reduce");
     }
 
     private void writeResultToCSV(List<InfractionCount> result) {
