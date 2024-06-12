@@ -15,14 +15,17 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("deprecation")
 public class Query4<K, T extends Ticket<K>> implements Runnable {
     private static final String OUTPUT_HEADER = "County;Plate;Tickets\n";
-    private static final String OUTPUT_NAME = "query4.csv";
+    private static final String OUTPUT_NAME = "/query4.csv";
+    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private final String jobName;
     private final HazelcastInstance hazelcastInstance;
@@ -31,13 +34,13 @@ public class Query4<K, T extends Ticket<K>> implements Runnable {
     private final LocalDateTime from;
     private final LocalDateTime to;
 
-    public Query4(String jobName, HazelcastInstance hazelcastInstance, IMap<Integer, T> tickets, String outputPath, LocalDateTime from, LocalDateTime to) {
+    public Query4(String jobName, HazelcastInstance hazelcastInstance, IMap<Integer, T> tickets, String outputPath, String from, String to) {
         this.jobName = jobName;
         this.hazelcastInstance = hazelcastInstance;
         this.tickets = tickets;
         this.outputPath = outputPath;
-        this.from = from;
-        this.to = to;
+        this.from = LocalDate.parse(from, FORMAT).atStartOfDay();
+        this.to = LocalDate.parse(to, FORMAT).atTime(23, 59, 59);
     }
 
     @Override

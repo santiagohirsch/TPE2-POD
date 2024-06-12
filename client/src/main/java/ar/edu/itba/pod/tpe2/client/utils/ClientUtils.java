@@ -7,6 +7,8 @@ import com.hazelcast.client.config.ClientNetworkConfig;
 import com.hazelcast.config.GroupConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -18,6 +20,7 @@ import java.util.logging.SimpleFormatter;
 
 public class ClientUtils {
 
+    private final static Logger logger = LoggerFactory.getLogger(ClientUtils.class);
     public static final String GROUP_NAME = "g12";
     public static final String GROUP_PASS = "g12-pass";
     public static final String NYC_INFRACTIONS = "infractionsNYC.csv";
@@ -38,6 +41,14 @@ public class ClientUtils {
     public static final String N = "n";
     public static final String FROM = "from";
     public static final String TO = "to";
+    public static final String ADDRESSES_ERROR_MSG = "No addresses were specified";
+    public static final String CITY_ERROR_MSG = "No city was specified";
+    public static final String IN_PATH_ERROR_MSG = "No input path was specified";
+    public static final String OUT_PATH_ERROR_MSG = "No output path was specified";
+    public static final String N_ERROR_MSG = "No n parameter was specified";
+    public static final String FROM_ERROR_MSG = "No beginning date was specified";
+    public static final String TO_ERROR_MSG = "No ending date was specified";
+
 
 
     public static Map<String, String> parseArgs(String[] args) {
@@ -53,8 +64,9 @@ public class ClientUtils {
         return argsMap;
     }
 
-    public static void checkNullArgument(String arg) {
+    public static void checkNullArgument(String arg, String msg) {
         if(arg == null) {
+            logger.error(msg);
             System.exit(1);
         }
     }

@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutionException;
 @SuppressWarnings("deprecation")
 public class Query5<K, T extends Ticket<K>> implements Runnable {
     private static final String OUTPUT_HEADER = "Group;Infraction A;Infraction B\n";
-    private static final String OUTPUT_NAME = "query5.csv";
+    private static final String OUTPUT_NAME = "/query5.csv";
 
     private final String jobName;
     private final HazelcastInstance hazelcastInstance;

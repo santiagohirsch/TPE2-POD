@@ -22,7 +22,7 @@ import java.util.concurrent.ExecutionException;
 @SuppressWarnings("deprecation")
 public class Query3 <K, T extends Ticket<K>> implements Runnable {
     private static final String OUTPUT_HEADER = "Issuing Agency;Percentage\n";
-    private static final String OUTPUT_NAME = "query3.csv";
+    private static final String OUTPUT_NAME = "/query3.csv";
 
     private final String jobName;
     private final HazelcastInstance hazelcastInstance;
@@ -30,12 +30,12 @@ public class Query3 <K, T extends Ticket<K>> implements Runnable {
     private final String outputPath;
     private final int n;
 
-    public Query3(String jobName, HazelcastInstance hazelcastInstance, IMap<Integer, T> tickets, String outputPath, int n) {
+    public Query3(String jobName, HazelcastInstance hazelcastInstance, IMap<Integer, T> tickets, String outputPath, String n) {
         this.jobName = jobName;
         this.hazelcastInstance = hazelcastInstance;
         this.tickets = tickets;
         this.outputPath = outputPath;
-        this.n = n;
+        this.n = Integer.parseInt(n);
     }
 
     @Override

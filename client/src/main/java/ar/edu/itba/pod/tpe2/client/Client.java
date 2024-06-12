@@ -16,6 +16,8 @@ import static ar.edu.itba.pod.tpe2.client.utils.ClientUtils.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.FileHandler;
 
 public class Client {
@@ -23,23 +25,30 @@ public class Client {
     private static final java.util.logging.Logger performanceLogger = java.util.logging.Logger.getLogger("performanceLogger");
     public static void main(String[] args) {
         logger.info("hz-config Client Starting ...");
-        String addresses = "192.168.64.1:5701";
-        HazelcastInstance hazelcastInstance = getHazelcastInstance(parseAddresses(addresses));
 
-        String cityName = "CHI";
-        StringBuilder infractionsPath = new StringBuilder("../TPE2-datasets/");
-        StringBuilder ticketsPath = new StringBuilder("../TPE2-datasets/");
-        String outPath = "../TPE2-out/";
-        String query = "query1";
-        int n = 10; //query3 -> top n agencies
-        //query4 -> from to
-        LocalDateTime from = LocalDateTime.of(2004, 1, 1, 0, 0, 0);
-        LocalDateTime to = LocalDateTime.of(2004, 12, 31, 23, 59, 59);
+        String query = args[0];
+        System.out.println(query);
+        Map<String, String> argsMap = parseArgs(args);
+
+        List<String> addresses = parseAddresses(argsMap.get(ADDRESSES));
+        String city = argsMap.get(CITY);
+        String inPath = argsMap.get(IN_PATH);
+        String outPath = argsMap.get(OUT_PATH);
+
+        checkNullArgument(argsMap.get(ADDRESSES), ADDRESSES_ERROR_MSG);
+        checkNullArgument(city, CITY_ERROR_MSG);
+        checkNullArgument(inPath, IN_PATH_ERROR_MSG);
+        checkNullArgument(outPath, OUT_PATH_ERROR_MSG);
+
+        HazelcastInstance hazelcastInstance = getHazelcastInstance(addresses);
+
+        StringBuilder infractionsPath = new StringBuilder(inPath).append("/");
+        StringBuilder ticketsPath = new StringBuilder(inPath).append("/");
+
 
         FileHandler fileHandler;
-
         try {
-            fileHandler = new FileHandler(outPath + "time" + query.substring(5) + ".txt");
+            fileHandler = new FileHandler(outPath + "/time" + query.substring(5) + ".txt");
             fileHandler.setFormatter(getFormatter());
             performanceLogger.addHandler(fileHandler);
         } catch (IOException | SecurityException e) {
@@ -48,9 +57,9 @@ public class Client {
 
 
         Runnable queryInstance = null;
-        switch (cityName.toUpperCase()) {
+        switch (city.toUpperCase()) {
             case "NYC" -> {
-                logger.info("Reading " + cityName.toUpperCase() + " infractions CSV");
+                logger.info("Reading " + city.toUpperCase() + " infractions CSV");
                 IMap<Integer, String> nycInfractionsMap = hazelcastInstance.getMap(INFRACTIONS_MAP_NAME);
                 infractionsPath.append(NYC_INFRACTIONS);
                 InfractionsPopulator<Integer> nycInfractionsPopulator = new InfractionsPopulator<>(infractionsPath.toString(), nycInfractionsMap, new NYCInfractionParser());
@@ -58,7 +67,7 @@ public class Client {
                 nycInfractionsPopulator.run();
                 performanceLogger.info("Fin de la lectura del archivo: " + infractionsPath);
 
-                logger.info("Reading " + cityName.toUpperCase() + " tickets CSV");
+                logger.info("Reading " + city.toUpperCase() + " tickets CSV");
                 IMap<Integer, NYCTicket> nycTicketsMap = hazelcastInstance.getMap(TICKETS_MAP_NAME);
                 ticketsPath.append(NYC_TICKETS);
                 TicketsPopulator<NYCTicket> nycTicketsPopulator = new TicketsPopulator<>(ticketsPath.toString(), nycTicketsMap, new NYCTicketFactory());
@@ -69,8 +78,18 @@ public class Client {
                 switch (query) {
                     case "query1" -> queryInstance = new Query1<>(QUERY1_JOB_NAME, hazelcastInstance, nycInfractionsMap, nycTicketsMap, outPath);
                     case "query2" -> queryInstance = new Query2<>(QUERY2_JOB_NAME, hazelcastInstance, nycInfractionsMap, nycTicketsMap, outPath);
-                    case "query3" -> queryInstance = new Query3<>(QUERY3_JOB_NAME, hazelcastInstance, nycTicketsMap, outPath, n);
-                    case "query4" -> queryInstance = new Query4<>(QUERY4_JOB_NAME, hazelcastInstance, nycTicketsMap, outPath, from, to);
+                    case "query3" -> {
+                        String n = argsMap.get(N);
+                        checkNullArgument(n, N_ERROR_MSG);
+                        queryInstance = new Query3<>(QUERY3_JOB_NAME, hazelcastInstance, nycTicketsMap, outPath, n);
+                    }
+                    case "query4" -> {
+                        String from = argsMap.get(FROM);
+                        String to = argsMap.get(TO);
+                        checkNullArgument(from, FROM_ERROR_MSG);
+                        checkNullArgument(to, TO_ERROR_MSG);
+                        queryInstance = new Query4<>(QUERY4_JOB_NAME, hazelcastInstance, nycTicketsMap, outPath, from, to);
+                    }
                     case "query5" -> queryInstance = new Query5<>(QUERY5_JOB_NAME, hazelcastInstance, nycInfractionsMap, nycTicketsMap, outPath);
                     default -> {
                         logger.error("Invalid query");
@@ -80,7 +99,7 @@ public class Client {
                 }
             }
             case "CHI" -> {
-                logger.info("Reading " + cityName.toUpperCase() + " infractions CSV");
+                logger.info("Reading " + city.toUpperCase() + " infractions CSV");
                 IMap<String, String> chiInfractionsMap = hazelcastInstance.getMap(INFRACTIONS_MAP_NAME);
                 infractionsPath.append(CHI_INFRACTIONS);
                 InfractionsPopulator<String> chiInfractionsPopulator = new InfractionsPopulator<>(infractionsPath.toString(), chiInfractionsMap, new CHIInfractionParser());
@@ -88,7 +107,7 @@ public class Client {
                 chiInfractionsPopulator.run();
                 performanceLogger.info("Fin de la lectura del archivo " + infractionsPath);
 
-                logger.info("Reading " + cityName.toUpperCase() + " tickets CSV");
+                logger.info("Reading " + city.toUpperCase() + " tickets CSV");
                 IMap<Integer, CHITicket> chiTicketsMap = hazelcastInstance.getMap(TICKETS_MAP_NAME);
                 ticketsPath.append(CHI_TICKETS);
                 TicketsPopulator<CHITicket> chiTicketsPopulator = new TicketsPopulator<>(ticketsPath.toString(), chiTicketsMap, new CHITicketFactory());
@@ -99,8 +118,18 @@ public class Client {
                 switch (query) {
                     case "query1" -> queryInstance = new Query1<>(QUERY1_JOB_NAME, hazelcastInstance, chiInfractionsMap, chiTicketsMap, outPath);
                     case "query2" -> queryInstance = new Query2<>(QUERY2_JOB_NAME, hazelcastInstance, chiInfractionsMap, chiTicketsMap, outPath);
-                    case "query3" -> queryInstance = new Query3<>(QUERY3_JOB_NAME, hazelcastInstance, chiTicketsMap, outPath, n);
-                    case "query4" -> queryInstance = new Query4<>(QUERY4_JOB_NAME, hazelcastInstance, chiTicketsMap, outPath, from, to);
+                    case "query3" -> {
+                        String n = argsMap.get(N);
+                        checkNullArgument(n, N_ERROR_MSG);
+                        queryInstance = new Query3<>(QUERY3_JOB_NAME, hazelcastInstance, chiTicketsMap, outPath, n);
+                    }
+                    case "query4" -> {
+                        String from = argsMap.get(FROM);
+                        String to = argsMap.get(TO);
+                        checkNullArgument(from, FROM_ERROR_MSG);
+                        checkNullArgument(to, TO_ERROR_MSG);
+                        queryInstance = new Query4<>(QUERY4_JOB_NAME, hazelcastInstance, chiTicketsMap, outPath, from, to);
+                    }
                     case "query5" -> queryInstance = new Query5<>(QUERY5_JOB_NAME, hazelcastInstance, chiInfractionsMap, chiTicketsMap, outPath);
                     default -> {
                         logger.error("Invalid query");
