@@ -26,7 +26,6 @@ public class Client {
         logger.info("hz-config Client Starting ...");
 
         String query = args[0];
-        System.out.println(query);
         Map<String, String> argsMap = parseArgs(args);
 
         List<String> addresses = parseAddresses(argsMap.get(ADDRESSES));
