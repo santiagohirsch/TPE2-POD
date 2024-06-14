@@ -17,8 +17,9 @@ Para ejecutar el servidor se deben ejecutar los siguientes comandos desde la car
 
 ```bash
 cd tmp/tpe2-g12-server-1.0-SNAPSHOT
-./run-server.sh -Dmask='192.168.0.*'
+./run-server.sh -Dmask="xx.xx.xx.xx"
 ```
+`Dmask` refiere a la interfaz en la que van a estar los nodos
 
 Para ejecutar el cliente se deben ejecutar los siguientes comandos desde la carpeta raíz:
 
@@ -35,8 +36,14 @@ donde:
 
 `Dcity` indica con qué dataset de ciudad se desea trabajar. Los únicos valores posibles son NYC y CHI.
 
-`DinPath` indica el path donde están los archivos de entrada de multas e infracciones
+`DinPath` indica el path donde están los archivos de entrada de multas e infracciones.
 
 `DoutPath` indica el path donde estarán ambos archivos de salida query1.csv y time1.txt.
 
-`[params]` son los parámetros extras que corresponden para algunas queries.
+`[params]` son los parámetros extras que corresponden a las queries 3 y 4:
+
+-`Dn` el entero que indica la cantidad de agencias para la query 3.
+
+-`Dfrom` indica desde que fecha (DD/MM/YY) listar las multas labradas para la query 4.
+
+-`Dto` indica hasta que fecha (DD/MM/YY) listar las multas labradas para la query 4.
