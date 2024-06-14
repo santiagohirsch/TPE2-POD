@@ -99,8 +99,6 @@ public class ClientUtils {
                 String level = record.getLevel().toString();
                 String thread = Thread.currentThread().getName();
                 String className = extractClassName(record.getSourceClassName());
-                // TODO: agregar linea de donde se llamo, tiene que quedar asi:
-                // TODO: format level [thread] class (class.java:line) - message
                 return String.format(
                         "%s %s [%s] %s - %s\n",
                         new SimpleDateFormat(format).format(record.getMillis()),
